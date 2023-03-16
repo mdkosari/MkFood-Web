@@ -1,0 +1,46 @@
+﻿@model MKFood.DB.Models.Price
+
+@{
+    ViewData["Title"] = "Add Price";
+}
+
+
+
+<h4>Set Price</h4>
+<div class="row">
+    <div class="col-md-4 card m-1 p-3" style="background-color:rgb(224, 224, 224);">
+        <div>
+            <div class="row">
+                <a asp-controller="Foods" asp-action="Index"><img style="width:30px;" class="float-end" src="~/img/x-circle.png" /></a>
+            </div>
+        </div>
+
+        
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Cost" class="control-label"></label>
+                <input type="number" asp-for="Cost" class="form-control" />
+                <span asp-validation-for="Cost" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input hidden class="form-check-input" asp-for="Expierd" /> 
+                </label>
+            </div>
+            <div class="form-group">
+                <select hidden asp-for="FoodId" class ="form-control" asp-items="ViewBag.FoodId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Set Price" class="btn btn-primary w-100" />
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

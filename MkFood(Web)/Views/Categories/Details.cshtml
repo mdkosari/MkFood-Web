@@ -1,0 +1,84 @@
+﻿@model MKFood.DB.Models.Category
+
+@{
+    ViewData["Title"] = "Category(Foods)";
+}
+
+<div class="row bg-light">
+    <div class="col-1">
+        <a class="no-link" asp-action="Index"><h1><-</h1></a>
+    </div>
+    <div class="col-8">
+        <h1>@Model.Name</h1>
+    </div>
+</div>
+
+<div class="row w-100">
+    @* Show Food Items *@
+    @foreach (var item in Model.Foods)
+    {
+
+        <div class="col-3 mb-5 m-2 food-item">
+            <div class="w100 row">
+                <a target="_blank" asp-controller="Foods" asp-controller="Foods" asp-controller="Foods" asp-action="Edit" asp-route-id="@item.FoodId"><img class="float-end food-item-edit" src="~/img/edit.png" /></a>
+                <a target="_blank" asp-controller="Foods" style="text-decoration:none;color:black;" asp-action="Details" asp-route-id="@item.FoodId"><h3>@item.Name</h3></a>
+                <img src="~/img/logo.png" class="food-pic" asp-append-version=true />
+
+
+                <h5 class="food-item-des">@item.Description</h5>
+                <p class="food-item-cat">@item.Category.Name</p>
+                <div class="row w100">
+                    <div class="col-7">
+                        @foreach (var p in @item.Prices)
+                        {
+                            @if (!p.Expierd)
+                            {
+
+                                <h5 class="food-item-price-set">$@p.Cost</h5>
+                            }
+                        }
+                        @if (item.Prices.Count <= 0)
+                        {
+                            <p>No Price</p>
+                        }
+                    </div>
+                    <div class="col-5">
+                        @if (item.Prices.Count > 0)
+                        {
+                            <a target="_blank" class="btn btn-outline-secondary w-100" asp-controller="Prices" asp-action="Create" asp-route-id=@item.FoodId>Set</a>
+                        }
+                        @if (item.Prices.Count <= 0)
+                        {
+
+                            <a target="_blank" class="btn btn-secondary w-100" asp-controller="Prices" asp-action="Create" asp-route-id=@item.FoodId>Set</a>
+                        }
+                    </div>
+                </div>
+                <a target="_blank" asp-controller="Foods" class="btn mt-2 food-item-add-order" style="" asp-action="Details" asp-route-id=@item.FoodId>Add Order</a>
+            </div>
+        </div>
+
+    }
+
+
+</div>
+
+
+
+<div>
+    <hr />
+   
+</div>
+
+<dl class="row">
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Name)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Name)
+    </dd>
+</dl>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.CategoryId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
