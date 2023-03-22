@@ -24,19 +24,23 @@ namespace MkFood_Web_.Controllers
         {
             List<Food> foods  = await _context.Foods
                 .Include(f => f.Category)
-                .Include(f => f.Prices).ToListAsync();
+                .Include(f => f.Prices)
+                .ToListAsync();
+
             return View(foods);
         }
 
-        //Filter
+        //GET: CategoryFoods/2
         public async Task<IActionResult> CategoryFoods(int? id)
         {
             if(id != null || id >= 0)
             {
-                List<Food> foods = await _context.Foods.Where(f => f.CategoryId == id).
-                    Include(f => f.Category)
+                List<Food> foods = await _context.Foods
+                    .Where(f => f.CategoryId == id)
+                    .Include(f => f.Category)
                     .Include(f => f.Prices)
                     .ToListAsync();
+
                 return View("Index", foods);
             }
             return View("Index");
@@ -70,10 +74,7 @@ namespace MkFood_Web_.Controllers
         }
 
         // POST: Foods/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("FoodId,Name,Description,Picture,CategoryId")] Food food)
         {
             
@@ -101,8 +102,6 @@ namespace MkFood_Web_.Controllers
         }
 
         // POST: Foods/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("FoodId,Name,Description,Picture,CategoryId")] Food food)
@@ -131,44 +130,6 @@ namespace MkFood_Web_.Controllers
             }
             return RedirectToAction("Index");
             
-        }
-
-        // GET: Foods/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Foods == null)
-            {
-                return NotFound();
-            }
-
-            var food = await _context.Foods
-                .Include(f => f.Category)
-                .FirstOrDefaultAsync(m => m.FoodId == id);
-            if (food == null)
-            {
-                return NotFound();
-            }
-            // Redirection Food Delet To Index
-            return RedirectToAction("Index");
-        }
-
-        // POST: Foods/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Foods == null)
-            {
-                return Problem("Entity set 'MKFoodDbContext.Foods'  is null.");
-            }
-            var food = await _context.Foods.FindAsync(id);
-            if (food != null)
-            {
-                _context.Foods.Remove(food);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool FoodExists(int id)

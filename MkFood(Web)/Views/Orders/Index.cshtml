@@ -1,0 +1,148 @@
+﻿@model IEnumerable<MKFood.DB.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="card w-100">
+    <div class="card-header">
+       <div class="row">
+            <div class="col-10">
+                <img src="~/img/logo.png" />
+            </div>
+            <div class="col-2"><h3>MkFood</h3><h5>Resturant</h5></div>
+       </div>
+       <div class="row">
+           
+           <div class="col-10">
+               <label for="name-inp"><h6>Name</h6></label>
+               <input id="customer" value="Customer Name" type="text" class="name-inp bg-light input-group-text w-100" />
+            </div>
+            <div class="col-2">
+                <label for="number-inp"><h6>|</h6></label>
+                <input id="date" value="@DateTime.Now.ToString("dd/MM/yyyy")" type="datetime" class="number-inp input-group-text w-100" />
+            </div>
+       </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr id="tr_@item.OrderId" class="bg-light">
+                        
+                        <td>
+                            <h6 style="margin-top:10px;">@item.Food.Name</h6>
+                        </td>
+                        <td>
+                            <div class="row">
+
+                                <div class="col-auto align-items-end">
+                                    @if(item.Count > 1){
+                                        <button onclick="IncDecOrder('-',@item.OrderId)" class="btn"><img style="width:auto;" src="~/img/left.png" /></button>
+                                    }
+                                    else
+                                    {
+                                        <button onclick="IncDecOrder('-',@item.OrderId)" class="btn"><img style="width:auto;" src="~/img/x-regular.png" /></button>
+                                    }
+                                </div>
+                                <div class="col-auto align-bottom">
+                                    <h4 id="count_@item.OrderId" style="text-align:center;height:max-content;margin-top:5px;">@item.Count</h4>
+                                </div>
+                                <div class="col-auto">
+                                    <button onclick="IncDecOrder('+',@item.OrderId)" class="btn"><img style="width:auto;" src="~/img/right.png" /></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <h6 style="margin-top:10px;" id="cost_@item.OrderId">$@item.Cost</h6>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (@Model.Count() > 0)
+    {
+        <div class="card-footer">
+            <div class="row">
+                <label id="err_cost" class="text-danger">Calculate Cost First</label>
+                <div class="col">
+                    <h5 for="Fee">Fee($)</h5>
+                    <input id="fee_@Model.First().BillId" class="Fee input-group-text" type="number" value="@Model.First().Bill.Fee" />
+                </div>
+                <div class="col">
+                    <h5 for="Tax">Tax(%)</h5>
+                    <input id="tax_@Model.First().BillId" class="Tax input-group-text" type="number" value="@Model.First().Bill.Tax" />
+                </div>
+
+                <div class="col">
+                    <h5 for="Tax">Sum($)</h5>
+                    <h4 id="cost_@Model.First().BillId" class="Fee text-capitalize">$@Model.First().Bill.Cost</h4>
+                </div>
+                <div id="calculate" class="col">
+                    <button  onclick="OrderCalculator(@Model.First().BillId)" class="w-100 mt-4 btn-lg">Calculat</button>
+                
+                </div>
+
+                <button disabled onclick="SaveBill(@Model.First().BillId)" id="save" class="mt-5 btn-lg btn-primary">Finsh</button>
+            
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+
+
+    function IncDecOrder(inc,id){
+
+        if(inc === '-'){
+            var url = "/Orders/DecOrder/" + id ;
+            $.get(url, function (data) {
+                let json = $.parseJSON(data);
+                $('#count_' + id).html(json[0]);
+                $('#cost_' + id).html("$" + json[1]);
+                if(json[0] <= 0)
+                    $('#tr_' + id).remove();
+            });
+        }else{
+            var url = "/Orders/IncOrder/" + id;
+            $.get(url, function (data) {
+                let json = $.parseJSON(data);
+                $('#count_' + id).html(json[0]);
+                $('#cost_' + id).html("$" + json[1]);
+            });
+        }
+        $('#err_cost').html("Cost Not Updated");
+        $('#save').prop('disabled',true);
+    }
+
+    function OrderCalculator(billId){
+        var url = "/Orders/BillCalculator";
+        $.get(url, { 'id': billId, 'fee': $("#fee_" + billId).val(), 'tax': $("#tax_" + billId).val() }, function (data) {
+            $("#cost_" + billId).html('$'+data);
+            $('#err_cost').html("");
+            $('#save').prop('disabled', false);
+        });
+    }
+
+    function SaveBill(billId){
+        var url = "/Orders/SaveBill";
+        $.get(url, { 'id': billId, 'date': $("#date").val(), "name": $("#customer").val() }, function (data) {
+            
+            if(data){
+                $("#calculate").remove();
+                window.print();
+                location.reload();
+            }else{
+                $('#err_cost').html("Failed To save");
+            }
+            
+        });
+        
+    }
+</script>
+
+
+

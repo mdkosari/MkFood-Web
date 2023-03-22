@@ -1,0 +1,137 @@
+﻿@model IEnumerable<MKFood.DB.Models.Bill>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="card w-100">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-5">
+                <img src="~/img/logo.png" />
+            </div>
+            <div class="col-5">
+                <h3 style="color:red;">Reports</h3>
+                <br />
+                <h4></h4>
+            </div>
+            <div class="col-2"><h3>MkFood</h3><h5>Resturant</h5></div>
+        </div>
+        @*Filter*@
+            <div class="row">
+                <div class="col-2">
+                    <label for="number-inp"><h6>Date From:</h6></label>
+                    <input id="date-from" value="@ViewBag.From" type="datetime" class="number-inp input-group-text w-100" />
+                </div>
+                ->
+                <div class="col-2">
+                    <label for="number-inp"><h6>Date To</h6></label>
+                <input id="date-to" value="@ViewBag.To" type="datetime" class="number-inp input-group-text w-100" />
+                </div>
+
+                <div class="col-2 m-2"></div>
+
+                <div class="col-2">
+                    <label for="form-check"><h6>Only Success:</h6></label>
+
+                    <div class="form-check form-switch">
+                    @if (ViewBag.Success){
+                        <input  style="width:50px;height:25px;" class="form-check-input" type="checkbox" id="success" checked>
+                    }else{
+                        <input style="width:50px;height:25px;" class="form-check-input" type="checkbox" id="success">
+                    }
+                    </div>
+                </div>
+
+                <div class="col-3">
+                <button onclick="Filter()" class="mt-4 w-100 btn-outline-secondary">Filter</button>
+                </div>
+            </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="bg-light">
+                        <td>
+                            <div class="row">
+                                <div class="col-2">
+                                    <img src="~/img/Fee.png"/>
+                                </div>
+                                <div class="col-5 mt-1">
+                                    <h5>$@item.Fee</h5>
+
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-2">
+                                    <img src="~/img/Tax.png"/>
+                                </div>
+                                <div class="col-5 mt-1 ms-lg-1">
+                                    <h5>%@item.Tax</h5>
+
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-2">
+                                    <img src="~/img/Cost.png"/>
+                                </div>
+                                <div class="col-9 mt-1">
+                                    <h5>$@item.Cost</h5>
+
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col-3">
+                                    <img src="~/img/OrderList.png" />
+                                </div>
+                                <div class="col-9 mt-2">
+                                    <h5>@item.orders.Count</h5>
+
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            @if(item.Success){
+                                <img src="~/img//Ok.png"/>
+                            }else{
+                                <img src="~/img/x-circle.png" />
+                            }
+                        </td>
+                        
+                        <td>
+                            <div class="row">
+                                <div class="col-1">
+                                    <img src="~/img/Date.png" />
+                                </div>
+                                <div class="col-7 ms-lg-2 mt-2">
+                                    <h6>@item.Created?.ToString("dd/MM/yy")</h6>
+
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            |<a asp-action="Details" asp-route-id="@item.BillId"><img src="~/img/right.png"/></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+  
+    //Redirection To Filter Controler Action
+    function Filter(){
+        let url = "/Reports/Filter/?from=" + $("#date-from").val() + "&to=" + $("#date-to").val() + "&success=" + $("#success").is(':checked');
+        $(location).attr('href', url);
+    }
+</script>

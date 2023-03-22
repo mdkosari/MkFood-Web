@@ -4,6 +4,10 @@
     ViewData["Title"] = "Foods";
 }
 
+<head>
+   
+</head>
+
 <a class="btn btn-success add-food" asp-action="Create">+</a>
 
 <div class="row w-100 justify-content-center">
@@ -38,62 +42,39 @@
                             <a class="btn btn-outline-secondary w-100" asp-controller="Prices" asp-action="Create" asp-route-id=@item.FoodId>Set</a>
                         }else
                         {
-                            <a class="btn btn-secondary w-100"  asp-controller="Prices" asp-action="Create" asp-route-id=@item.FoodId>Set</a>
+                            <a  class="btn btn-secondary w-100" asp-controller="Prices" asp-action="Create" asp-route-id=@item.FoodId>Set</a>
                         }
                     </div>
                 </div>
-                <a class="btn mt-2 food-item-add-order" style="" asp-action="Details" asp-route-id=@item.FoodId>Add Order</a>
+                <button onclick="AddOrder(@item.FoodId)" class="btn mt-2 food-item-add-order" asp-action="Details" id=@item.FoodId>Add Order</button>
             </div>
-        </div>    
+        </div>
     }
 </div>
 
+<script>
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        
+        var url = "/Orders/CheckOrderedFood";
+        $.get(url, function (data) {
+            let json = $.parseJSON(data);
+            console.log(json);
+            json.forEach(DisableFood);
+            
+        });
+    });
 
-@*<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Picture)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Prices)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Picture)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Name)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Prices.Count)
-                </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FoodId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.FoodId">Details</a> |
-                <a asp-controller="Prices" asp-action="Create" asp-route-id="@item.FoodId">Price Set</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>*@
+    function DisableFood(item){
+        $('#' + item.FoodId).prop('disabled', true);
+        $('#' + item.FoodId).html('Added');
+    }
+
+    function AddOrder(id){
+        var url = "/Orders/AddOrders/" + id;
+        $.get(url, function (data) {
+            $('#'+id).prop('disabled', true);
+            $('#' + id).html("Added");
+        });
+    }
+</script>
