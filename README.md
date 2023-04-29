@@ -1,2 +1,2 @@
-# MkFood-Web
-Asp .Net mvc Resturant project
+# MkFood
+Resturant Managment project by Asp .Net mvc
